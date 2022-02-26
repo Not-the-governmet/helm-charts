@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gw-pod
+  labels:
+    app: gateway
+spec:
+  containers:
+    - name: gw-container
+      image: ghcr.io/niich/gw
+      imagePullPolicy: Always
