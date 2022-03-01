@@ -16,6 +16,7 @@ extensions:
   - druid-parquet-extensions
   - druid-kinesis-indexing-service
 
+
 # Common env vars
 # service specific env will overwrite these values
 env:
