@@ -1,0 +1,154 @@
+## Provide a name in place of minio for `app:` labels
+##
+nameOverride: ""
+
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+
+## set kubernetes cluster domain where minio is running
+##
+clusterDomain: cluster.local
+
+## Set default image, imageTag, and imagePullPolicy. mode is used to indicate the
+##
+image:
+  repository: registry.k3s.local/tena-example
+  tag: "latest"
+  pullPolicy: Always
+
+  imagePullSecrets:
+    - name: regcred
+
+listenEndpoint:
+  host: localhost 
+  port: 51100
+
+executionManager:
+  host: exman-execution-manager-service
+  port: 51102
+## Set default image, imageTag, and imagePullPolicy for the `mc` (the minio
+## client used to create a default bucket).
+##
+
+## Additional labels to include with deployment or statefulset
+additionalLabels: []
+
+## Additional annotations to include with deployment or statefulset
+additionalAnnotations: []
+
+## Additional arguments to pass to minio binary
+extraArgs: []
+
+## Update strategy for Deployments
+DeploymentUpdate:
+  type: RollingUpdate
+  maxUnavailable: 0
+  maxSurge: 100%
+
+## Update strategy for StatefulSets
+StatefulSetUpdate:
+  updateStrategy: RollingUpdate
+
+## Pod priority settings
+## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+##
+priorityClassName: ""
+
+## Path where PV would be mounted on the MinIO Pod
+mountPath: "/export"
+
+# Number of drives attached to a node
+drivesPerNode: 1
+# Number of MinIO containers running
+replicas: 16
+# Number of expanded MinIO clusters
+pools: 1
+
+## Trusted Certificates Settings for MinIO. Ref: https://docs.minio.io/docs/how-to-secure-access-to-minio-server-with-tls#install-certificates-from-third-party-cas
+## Bundle multiple trusted certificates into one secret and pass that here. Ref: https://github.com/minio/minio/tree/master/docs/tls/kubernetes#2-create-kubernetes-secret
+## When using self-signed certificates, remember to include MinIO's own certificate in the bundle with key public.crt.
+## If certSecret is left empty and tls is enabled, this chart installs the public certificate from .Values.tls.certSecret.
+trustedCertsSecret: ""
+
+## Expose the MinIO service to be accessed from outside the cluster (LoadBalancer service).
+## or access it from within the cluster (ClusterIP service). Set the service type and the port to serve it.
+## ref: http://kubernetes.io/docs/user-guide/services/
+##
+service:
+  type: ClusterIP
+  clusterIP: ~
+  ## Make sure to match it to minioAPIPort
+  port: "9000"
+  nodePort: 32000
+
+## Configure Ingress based on the documentation here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+##
+
+ingress:
+  enabled: false
+  # ingressClassName: ""
+  labels: {}
+    # node-role.kubernetes.io/ingress: platform
+
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # kubernetes.io/ingress.allow-http: "false"
+    # kubernetes.io/ingress.global-static-ip-name: ""
+    # nginx.ingress.kubernetes.io/secure-backends: "true"
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    # nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+  path: /
+  hosts:
+    - minio-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+## Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Additational pod annotations
+podAnnotations: {}
+
+# Additional pod labels
+podLabels: {}
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources: {}
+  # requests:
+  #   memory: 16Gi
+
+## Use this field to add environment variables relevant to MinIO server. These fields will be passed on to MinIO container(s)
+## when Chart is deployed
+extraEnvironment: {}
+  ## Please refer for comprehensive list https://docs.min.io/minio/baremetal/reference/minio-server/minio-server.html
+  ## MINIO_SUBNET_LICENSE: "License key obtained from https://subnet.min.io"
+  ## MINIO_BROWSER: "off"
+
+networkPolicy:
+  enabled: false
+  allowExternal: true
+
+## PodDisruptionBudget settings
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+##
+podDisruptionBudget:
+  enabled: false
+  maxUnavailable: 1
+
+## Specify the service account to use for the MinIO pods. If 'create' is set to 'false'
+## and 'name' is left unspecified, the account 'default' will be used.
+serviceAccount:
+  create: false
+  ## The name of the service account to use. If 'create' is 'true', a service account with that name
+  ## will be created.
+  name: "minio-sa"

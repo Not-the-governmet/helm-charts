@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "tena.fullname" . }}-service
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: execution-manager
+  ports:
+    - targetPort: {{ .Values.listenEndpoint.port }}
+      port: {{ .Values.listenEndpoint.port }}
+      protocol: UDP
+    - targetPort: {{ .Values.listenEndpoint.port }}
+      port: {{ .Values.listenEndpoint.port }}
+      protocol: TCP
+      # nodePort: 30321

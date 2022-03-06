@@ -1,0 +1,80 @@
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# kubectl -n kube-system apply -f .\registry\containerd-configmap.yaml
+
+      # cat /etc/config/custom_config.toml >> /mnt/etc/containerd/config.toml
+      # cat /mnt/etc/containerd/config.toml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: em-config
+  labels:
+    app: default-init
+data:
+  custom_config: |
+    # listenEndpoints=${HOSTNAME}:{{ .Values.listenEndpoint.port }}
+    listenEndpoints=exman-execution-manager-service:{{ .Values.listenEndpoint.port }}
+    allowArbitraryValue
+    nonInteractive
+    # This file was developed under various United States Government contracts.  The United States Government retains
+    # unlimited rights to this file and software derived from this file.  For questions related to the rights and use of
+    # this file contact the Test Resource Management Center (TRMC) at feedback@trmc.osd.mil.
+    #
+    # Configuration parameter names have this format:
+    #
+    #    configFilePrefix.paramaterName
+    #
+    # where the configFilePrefix is optional.  If the configFilePrefix is set (e.g.,
+    # by using the -configFilePrefix command line argument), then the parameterName
+    # will only be read by the application if the configFilePrefix option matches.
+    # If parameterName has no configFilePrefix, then it will always be read.
+    #
+    # It is possible to specify that environment variables be substituted into a
+    # configuration file using an expression like:
+    # ${ENVIRONMENT_VARIABLE_NAME}.
+    #
+    # If the environment variable is undefined, the entry will be ignored.
+    #
+    ################################################################################
+    # TENA Middleware Configuration Parameters
+    # (For a complete list, pass -help to the application on the command line.)
+    ################################################################################
+
+    # Leaving off ":portNumber" below means that a random port number will be used
+    listenEndpoints = ${HOSTNAME}:{{ .Values.listenEndpoint.port }}
+
+    # The directory for diagnostic and error log files. The default directory is
+    # $TENA_HOME/$TENA_VERISON/log. If either $TENA_HOME or $TENA_VERSION
+    # is not set or if the logDir directory does not exist, then logDir defaults to
+    # the current directory.
+    #logDir=
+
+    # Uncomment the below line to disable the error log file (messages will only go
+    # to std::cout).
+    #noErrorLog
+
+    ################################################################################
+    # User Application-specific Configuration Parameters
+    ################################################################################
+
+    # The directory for the database containing EM state.  When this option is set,
+    # the EM will both save, and when relevant, recover, its state using the
+    # database in the specified recoveryDir.  If the specified directory does not
+    # exist, it will be created.  This option must be specified, if it was set for
+    # an EM that abnormally-terminated, and that EM is being recovered at the same
+    # listenEndpoint. If this option is not set, then recovery capabilities are
+    # disabled for the EM.
+    recoveryDir=../emRecoveryDir

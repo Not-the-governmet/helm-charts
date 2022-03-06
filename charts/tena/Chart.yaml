@@ -1,0 +1,9 @@
+apiVersion: v1
+appVersion: RELEASE.2022-02-18T01-50-10Z
+description: TENA k8s deployment
+keywords:
+- tena
+- producer
+- consumer
+name: tena
+version: 0.1.0
