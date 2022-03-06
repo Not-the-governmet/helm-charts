@@ -72,7 +72,7 @@ trustedCertsSecret: ""
 ## ref: http://kubernetes.io/docs/user-guide/services/
 ##
 service:
-  type: ClusterIP
+  type: NodePort
   clusterIP: ~
   # ## Make sure to match it to minioAPIPort
   # port: 51111
